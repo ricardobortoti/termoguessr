@@ -1,11 +1,8 @@
 package br.bortoti.termoguessr.application.domain;
 
-import org.w3c.dom.DOMStringList;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Word {
     private Map<Character, Integer[]> have;
@@ -38,9 +35,9 @@ public class Word {
                 );
     }
 
-    private boolean containPosition(String word, Character character, Integer posititon) {
-        return ((posititon != -1) && (word.indexOf(character) == posititon-1)) ||
-               ((posititon == -1) && (word.indexOf(character) != -1));
+    private boolean containPosition(String word, Character character, Integer position) {
+        return ((position != -1) && (word.indexOf(character) == position-1)) ||
+               ((position == -1) && (word.indexOf(character) != -1));
     }
 
     public List<String> guess(List<String> wordDict) {

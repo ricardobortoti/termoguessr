@@ -78,11 +78,19 @@ class WordTest {
         dictionary = DictionaryLoader.Load("words.txt");
         var expectedList = List.of( "UTERO");
         word = new Word(5,
+                Map.of('E', new Integer[] {3},
+                             'O', new Integer[] {5},
+                             'U', new Integer[] {-1},
+                             'T', new Integer[] {-1}),
+                Set.of('C','H','I','L','V','N','S','D'));
+        /*
+        word = new Word(5,
                 Map.of('T', new Integer[] {-1},
                         'E', new Integer[] {-1},
                         'R', new Integer[] {-1},
                         'O', new Integer[] {5}),
                 Set.of('M'));
+         */
         //when
         List<String> result = word.guess(dictionary);
         //then
