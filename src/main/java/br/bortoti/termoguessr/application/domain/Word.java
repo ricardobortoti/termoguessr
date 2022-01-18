@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 public class Word {
     private Map<Character, Integer[]> have;
-    private Set<Character> haveNot;
+    private Map<Character, Integer[]> haveNot;
     private Integer size;
 
-    public Word(Integer size, Map<Character, Integer[]> have, Set<Character> haveNot) {
+    public Word(Integer size, Map<Character, Integer[]> have, Map<Character, Integer[]> haveNot) {
         this.have = have;
         this.haveNot = haveNot;
         this.size = size;
@@ -17,14 +17,6 @@ public class Word {
 
     private Predicate<String> sizeOf(int size) {
         return s -> s.length() == size;
-    }
-
-    private Predicate<String> havingNot(Set<Character> haveNot) {
-        return s -> !containSet(s, haveNot);
-    }
-
-    private boolean containSet(String word, Set<Character> haveNot) {
-        return haveNot.stream().anyMatch(c -> word.indexOf(c) != -1);
     }
 
     private Predicate<String> having(Map<Character, Integer[]> have) {
@@ -35,17 +27,48 @@ public class Word {
                 );
     }
 
+    private Predicate<String> notHaving(Map<Character, Integer[]> have) {
+        return s -> have.keySet()
+                .stream()
+                .allMatch(k -> Arrays.stream(have.get(k))
+                        .noneMatch(index -> containPosition(s, k, index))
+                );
+    }
+
+    private Set<Integer> checkIndexes(String word, Character character) {
+        int index = 0;
+        Set<Integer> res = new HashSet<>();
+        while (index != -1) {
+            index = word.indexOf(character, index);
+
+            if (index != -1)
+            {
+                res.add(index);
+                index++;
+            }
+        }
+
+        return res;
+    }
+
     private boolean containPosition(String word, Character character, Integer position) {
-        return ((position != -1) && (word.indexOf(character) == position-1)) ||
-               ((position == -1) && (word.indexOf(character) != -1));
+        Set<Integer> test = checkIndexes(word, character);
+
+        return ((position != -1) && ( checkIndexes(word, character).contains(position-1))) ||
+                ((position == -1) && (word.indexOf(character) != -1));
+/*
+        return ((position != -1) && (word.indexOf(character) == position - 1)) ||
+                ((position == -1) && (word.indexOf(character) != -1));
+
+ */
     }
 
     public List<String> guess(List<String> wordDict) {
         var resultingList = wordDict
                 .stream()
                 .filter(sizeOf(this.size))
-                .filter(havingNot(haveNot))
                 .filter(having(have))
+                .filter(notHaving(haveNot))
                 .collect(Collectors.toList());
 
         return resultingList;
